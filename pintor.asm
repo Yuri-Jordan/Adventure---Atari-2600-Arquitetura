@@ -8,12 +8,6 @@
 	lw $t6,corCinza
 	li $t3,512 # Iterador com quantidade de pixels da tela
 	li $t7,0
-lerArray:
-	lw $a0,tela1($t7)
-	add $t7,$t7,4
-	sw $a0,0($t0)
-	add $a0,$a0,4
-	j lerArray
 loop:
 	beq $t3,$zero,fim
 	lw $t1,0xffff0004 # Carrega keyboard
