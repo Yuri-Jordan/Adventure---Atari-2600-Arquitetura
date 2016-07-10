@@ -10,13 +10,13 @@
 	li $t7,0
 loop:
 	beq $t3,$zero,fim
-	lw $t1,0xffff0004 # Carrega keyboard
-	beq $t1,97,pintarAmarelo
+	lw $t1,0xffff0000 # Carrega keyboard
+	beq $t1,1,pintarAmarelo
 	beq $t1,99,pintarCinza
 	beq $t1,0,loop
 	j loop
 pintarAmarelo:
-	sw $zero,0xffff0004
+	#sw $zero,0xffff0004
 	sw $t2,0($t0)
 	addi $t0,$t0,4
 	addi $t3,$t3,-1
