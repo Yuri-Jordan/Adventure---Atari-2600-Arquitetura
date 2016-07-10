@@ -30,6 +30,9 @@ movimentar:
 	beq $t3,115,baixo
 	j aguardaInput
 esquerda:
+	lw $t4,-4($t1)# Colisão
+	beq $t4,16766720,aguardaInput
+	beq $t4,0,aguardaInput
 	addi $t1,$t1,-4
 	sw $t5,0($t1)
 	addi $t1,$t1,4
@@ -39,6 +42,9 @@ esquerda:
 	addi $t1,$t1,-4
 	j aguardaInput
 direita:
+	lw $t4,4($t1)# Colisão
+	beq $t4,16766720,aguardaInput
+	beq $t4,0,aguardaInput
 	addi $t1,$t1,4
 	sw $t5,0($t1)
 	addi $t1,$t1,-4
@@ -48,6 +54,9 @@ direita:
 	addi $t1,$t1,4
 	j aguardaInput
 baixo:
+	lw $t4,128($t1)# Colisão
+	beq $t4,16766720,aguardaInput
+	beq $t4,0,aguardaInput
 	addi $t1,$t1,128
 	sw $t5,0($t1)
 	addi $t1,$t1,-128
@@ -57,6 +66,9 @@ baixo:
 	addi $t1,$t1,128
 	j aguardaInput
 cima:
+	lw $t4,-128($t1)# Colisão
+	beq $t4,16766720,aguardaInput
+	beq $t4,0,aguardaInput
 	addi $t1,$t1,-128
 	sw $t5,0($t1)
 	addi $t1,$t1,128
