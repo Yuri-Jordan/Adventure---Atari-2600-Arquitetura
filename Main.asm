@@ -1,4 +1,3 @@
-############################### CÓPIA ##################################
 .include "mapas.asm"
 .text
 	li $t0,0
@@ -6,43 +5,82 @@
 	lui $t2,0xffff
 	li $t6,11 #  Armazena qual fase a ser desenhada
 	j loop
+##################################### Mapas ###################################
+
+# $t5 recebe o Char do vetor e pula pra pintar o pixel
 mapa4:
 	lw $t5,casteloPreto($t0)
+	j cont
+mapa5:
+	lw $t5,labirinto5($t0)
+	j cont
+mapa9:
+	lw $t5,verdeDragaoAmarelo($t0)
 	j cont
 mapa10:
 	lw $t5,acimaCastAmarelo($t0)
 	j cont
 mapa11:
-	# $t5 recebe o Char do vetor e pula pra pintar o pixel
 	lw $t5,casteloAmarelo($t0)
 	j cont
 mapa12:
-	# $t5 recebe o Char do vetor e pula pra pintar o pixel
 	lw $t5,abaixoCastelo($t0)
 	j cont
+mapa13:
+	lw $t5,ptVerdeLinhaPreta($t0)
+	j cont
+mapa14:
+	lw $t5,laranjaDragaoVerde($t0)
+	j cont
+########################################## Desenha Mapas ###################################
 loop:
 	beq $t0,2048,desenharPlayer
 	beq $t6,4,mapa4
+	beq $t6,5,mapa5
+	beq $t6,9,mapa9
 	beq $t6,11,mapa11
 	beq $t6,12,mapa12
+	beq $t6,13,mapa13
+	beq $t6,14,mapa14
 	cont:	
-	#beq $t5,60,pintarPreto
 	beq $t5,120,pintarAmarelo
 	beq $t5,65,pintarCinza
+	beq $t5,57,pintarCinzaFase9
+	beq $t5,58,pintarCinzaFase11
+	beq $t5,59,pintarCinzaFase12
+	beq $t5,60,pintarCinzaFase13
+	beq $t5,61,pintarCinzaFase14
 	beq $t5,71,pintarVerde
+	beq $t5,76,pintarLaranja
 	beq $t5,80,pintarPreto
 	beq $t5,66,pintarBranco
 	# Não pintar 
 	jal incrementar
 	j loop
-qualMapaEstouB:
-	beq $t6,11,carregarMapa12
 ##################################### Carregar Mapas ############################
+carregarMapa4:
+	li $t6,4
+	j zerar
+carregarMapa5:
+	li $t6,5
+	j zerar
+carregarMapa9:
+	li $t6,9
+	j zerar
+carregarMapa11:
+	li $t6,11
+	j zerar
 carregarMapa12:
 	li $t6,12
-	j zera
+	j zerar
+carregarMapa13:
+	li $t6,13
+	j zerar
+carregarMapa14:
+	li $t6,14
+	j zerar
 #################################### Zera iteradores ##############################
-zera:
+zerar:
 	li $t0,0
 	lui $t1,0x1001
 	j loop
@@ -69,46 +107,64 @@ movimentar:
 	j aguardaInput
 esquerda:
 	lw $t4,-4($t1)# Colisão
-	beq $t4,16766720,aguardaInput
-	beq $t4,0x00FF7F,aguardaInput
-	beq $t4,0,aguardaInput
+	beq $t4,16766720,aguardaInput # = amarelo
+	beq $t4,0x00FF7F,aguardaInput # = verde	
+	beq $t4,0xFFA500,aguardaInput # = laranja
+	beq $t4,0,aguardaInput # = preto
 	li $t5,11119017
 	sw $t5,0($t1)
-	addi $t1,$t1,-4
+	beq $t4,11119016,carregarMapa12
+	beq $t4,11119013,carregarMapa9
+	addi $t1,$t1,-4 
 	li $t5,255
 	sw $t5,0($t1)
 	j aguardaInput
 direita:
 	lw $t4,4($t1)# Colisão
+	
 	beq $t4,16766720,aguardaInput
 	beq $t4,0x00FF7F,aguardaInput
+	beq $t4,0xFFA500,aguardaInput
 	beq $t4,0,aguardaInput
 	li $t5,11119017
 	sw $t5,0($t1)
 	addi $t1,$t1,4
+	beq $t4,11119016,carregarMapa12
+	beq $t4,11119014,carregarMapa13
 	li $t5,255
 	sw $t5,0($t1)
 	j aguardaInput
 baixo:
 	lw $t4,128($t1)# Colisão
+	li $v0,1
+	move $a0,$t4
+	syscall
 	beq $t4,16766720,aguardaInput
 	beq $t4,0x00FF7F,aguardaInput
+	beq $t4,0xFFA500,aguardaInput
 	beq $t4,0,aguardaInput
 	li $t5,11119017 # cinza em decimal
 	sw $t5,0($t1)
-	beq $t4,120,qualMapaEstouB # Verifica se o person. passou dos limites da fase
+	beq $t4,11119016,carregarMapa12
+	beq $t4,11119015,carregarMapa14 # Verifica se o person. passou dos limites da fase
 	addi $t1,$t1,128
 	li $t5,255
 	sw $t5,0($t1)
 	j aguardaInput
 cima:
 	lw $t4,-128($t1)# Colisão
+	li $v0,1
+	move $a0,$t4
+	syscall
 	beq $t4,16766720,aguardaInput
 	beq $t4,0x00FF7F,aguardaInput
+	beq $t4,0xFFA500,aguardaInput
 	beq $t4,0,aguardaInput
-	beq $t4,0xf0ffff,aguardaInput
+	beq $t4,0xf0ffff,aguardaInput # = branco
 	li $t5,11119017
 	sw $t5,0($t1)
+	beq $t4,11119014,carregarMapa13
+	beq $t4,11119012,carregarMapa11
 	addi $t1,$t1,-128
 	li $t5,255
 	sw $t5,0($t1)
@@ -134,11 +190,43 @@ pintarPreto:
 	sw $t5,0($t1)
 	jal incrementar
 	j loop
+pintarLaranja:
+	li $t5,0xFFA500
+	sw $t5,0($t1)
+	jal incrementar
+	j loop
 pintarBranco:
 	li $t5,0xf0ffff
 	sw $t5,0($t1)
 	jal incrementar
 	j loop
+############################ PINTA OS SOLOS DE CINZA INDICANDO QUAL O PROX. MAPA A SER DESENHADO ####################
+pintarCinzaFase9:
+	li $t5,11119013
+	sw $t5,0($t1)
+	jal incrementar
+	j loop
+pintarCinzaFase11:
+	li $t5,11119012
+	sw $t5,0($t1)
+	jal incrementar
+	j loop
+pintarCinzaFase12:
+	li $t5,11119016
+	sw $t5,0($t1)
+	jal incrementar
+	j loop
+pintarCinzaFase13:
+	li $t5,11119014
+	sw $t5,0($t1)
+	jal incrementar
+	j loop
+pintarCinzaFase14:
+	li $t5,11119015
+	sw $t5,0($t1)
+	jal incrementar
+	j loop
+####################################################################################
 fim:
 	li $v0,10
 	syscall
