@@ -1,0 +1,72 @@
+[33mcommit 1c5229ab07a0c07ddbb93ae86406548d03db13b6[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Wed Jul 20 22:29:59 2016 -0300
+
+    Todas os mapas desenhados, com transição ntre todos ele. Mas ainda com bug na troca pro castelo Amarelo
+
+[33mcommit 16f9c0d2457ce2567f7f34a4d4ca575b84a50372[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Wed Jul 20 02:54:13 2016 -0300
+
+    Adicionados labirintos 1,6 e 8
+
+[33mcommit 4a3e2c80abeb7c84f20bde3bf91d6063892e0aa1[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Wed Jul 20 00:01:32 2016 -0300
+
+    Troca de mapas realizada, porém com um erro do mapa 12 p/ o 11.
+
+[33mcommit 7547ccde341c9e949994ca2262da81be87099226[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Mon Jul 18 23:36:15 2016 -0300
+
+    Modularização das funções que dsenham os mapas.
+
+[33mcommit aae8ef3a2572daf9824de984fb9950dd31f6f285[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Sun Jul 10 15:44:19 2016 -0300
+
+    Colisões definidas
+
+[33mcommit 8ab09cd880fd77d04caa69a71ef011a4c2dbc545[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Sun Jul 10 14:22:39 2016 -0300
+
+    Feita a movimentação do player
+
+[33mcommit 167936ec444ef4a4d5117b5b8ad9e3b535096218[m
+Merge: 3e12546 d43ab10
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Wed Jul 6 10:39:22 2016 -0300
+
+    Merge branch 'master' of https://github.com/Yuri-Jordan/Adventure---Atari-2600-Arquitetura
+
+[33mcommit 3e125464d384b26de096e60149802e42f9cc0b88[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Wed Jul 6 10:38:55 2016 -0300
+
+    merge
+
+[33mcommit 3ab05b89a8433a16685d9bbc1e2f9193aa8d1cbf[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Wed Jul 6 00:08:17 2016 -0300
+
+    Criado arquivo apenas com os mapas
+
+[33mcommit d43ab10c4ea59ca1b01463f12dc07a55a702c3a9[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Tue Jul 5 11:28:47 2016 -0300
+
+    Delete casteloAmarelo.ods
+
+[33mcommit a079c13967d4b4e8be9e7309cca4c640102c7f83[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Tue Jul 5 11:27:00 2016 -0300
+
+    Primeira tela criada. O Castelo amarelo
+
+[33mcommit 583dd708f737432bef20883465ac5a1310565d7a[m
+Author: Yuri Jordan <yurijrdn@gmail.com>
+Date:   Mon Jul 4 23:42:26 2016 -0300
+
+    Algoritmo que pinta pixel na tela e armazena seu valor em um vetor

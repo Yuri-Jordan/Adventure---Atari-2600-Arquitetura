@@ -49,6 +49,9 @@ mapa13:
 mapa14:
 	lw $t5,laranjaDragaoVerde($t0)
 	j cont
+Pause:
+	lw $t5,pause($t0)
+	j cont
 ########################################## Desenha Mapas ###################################
 loop:
 beq $t0,2048,desenharPlayer
@@ -74,6 +77,8 @@ beq $t0,2048,desenharPlayer
 	beq $t5,76,pintarLaranja
 	beq $t5,80,pintarPreto
 	beq $t5,65,pintarCinza
+	beq $t5,112,pintarVermelho
+	# Colocar "ID" dos proxs. mapas no mapa atualmente pintado
 	beq $t5,50,pintarCinzaFase2
 	beq $t5,51,pintarCinzaFase3
 	beq $t5,52,pintarCinzaFase4
@@ -133,6 +138,38 @@ carregarMapa13:
 carregarMapa14:
 	li $t6,14
 	j zerar
+############################# PAUSE #############################
+carregarPause:
+	li $v0,31
+	addi $a0,$zero,80 # passo
+	addi $a1,$zero,250 # duração
+	addi $a2,$zero,47 # insturmento
+	addi $a3,$zero,127 # volume	
+	syscall	
+	li $t0,0
+	lui $t1,0x1001
+	j desenharPause
+desenharPause:
+	beq $t0,2048,esperarDespause
+	lw $t5,pause($t0)
+	beq $t5,112,pintarVermelho
+	jal incrementar
+	j desenharPause
+esperarDespause:
+	lw $t3,0($t2)
+	beq $t3,1,verificar
+	j esperarDespause
+verificar:
+	lw $t3,4($t2)
+	beq $t3,112,somDespause
+	j esperarDespause
+somDespause:
+	addi $a0,$zero,73 # passo
+	addi $a1,$zero,250 # duração
+	addi $a2,$zero,47 # insturmento
+	addi $a3,$zero,127 # volume	
+	syscall	
+	j zerar
 #################################### Zera iteradores ##############################
 zerar:
 	li $t0,0
@@ -145,7 +182,7 @@ incrementar:
 	jr $ra	
 ####################################### Movimentação PLAYER ###################################
 desenharPlayer:
-	li $t5,255
+	li $t5,0xf0ffff
 	addi $t1,$t1,-324
 	sw $t5,0($t1)
 	aguardaInput:
@@ -158,6 +195,7 @@ movimentar:
 	beq $t3,100,direita
 	beq $t3,119,cima
 	beq $t3,115,baixo
+	beq $t3,112,carregarPause # Pause
 	j aguardaInput
 esquerda:
 	lw $t4,-4($t1)# Colisão
@@ -170,7 +208,7 @@ esquerda:
 	li $t5,11119017
 	sw $t5,0($t1)
 	addi $t1,$t1,-4 
-	li $t5,255
+	li $t5,0xf0ffff
 	sw $t5,0($t1)
 	beq $t4,11119016,carregarMapa12
 	beq $t4,11119013,carregarMapa9
@@ -186,7 +224,7 @@ direita:
 	li $t5,11119017
 	sw $t5,0($t1)
 	addi $t1,$t1,4
-	li $t5,255
+	li $t5,0xf0ffff
 	sw $t5,0($t1)
 	beq $t4,11119016,carregarMapa12
 	beq $t4,11119014,carregarMapa13
@@ -202,7 +240,7 @@ baixo:
 	li $t5,11119017 # cinza em decimal
 	sw $t5,0($t1)
 	addi $t1,$t1,128
-	li $t5,255
+	li $t5,0xf0ffff
 	sw $t5,0($t1)
 	beq $t4,11119018,carregarMapa3
 	beq $t4,11119020,carregarMapa4
@@ -226,7 +264,7 @@ cima:
 	li $t5,11119017
 	sw $t5,0($t1)
 	addi $t1,$t1,-128
-	li $t5,255
+	li $t5,0xf0ffff
 	sw $t5,0($t1)
 	beq $t4,11119019,carregarMapa2
 	beq $t4,11119020,carregarMapa4
@@ -272,11 +310,11 @@ pintarRoxo:
 	sw $t5,0($t1)
 	jal incrementar
 	j loop
-pintarBranco:
-	li $t5,0xf0ffff
+pintarVermelho:
+	li $t5,0xFF0000 # Cor vermelha em hexadecimal
 	sw $t5,0($t1)
 	jal incrementar
-	j loop
+	j desenharPause
 ############################ PINTA OS SOLOS DE CINZA INDICANDO QUAL O PROX. MAPA A SER DESENHADO ####################
 pintarCinzaFase2:
 	li $t5,11119019
