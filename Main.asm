@@ -4,6 +4,7 @@
 	lui $t1,0x1001
 	lui $t2,0xffff
 	li $t6,2 #  Armazena qual fase a ser desenhada
+	li $t8,255 # responsável pela mudança de cor do Cálice
 	j loop
 ##################################### Mapas ###################################
 # $t5 recebe o Char do vetor e pula pra pintar o pixel
@@ -52,6 +53,12 @@ mapa14:
 Pause:
 	lw $t5,pause($t0)
 	j cont
+dragaoP:
+	lw $t5,dragao($t0)
+	j cont
+caliceP:
+	lw $t5,calice($t0)
+	j cont
 ########################################## Desenha Mapas ###################################
 loop:
 beq $t0,2048,desenharPlayer
@@ -69,6 +76,8 @@ beq $t0,2048,desenharPlayer
 	beq $t6,12,mapa12
 	beq $t6,13,mapa13
 	beq $t6,14,mapa14
+	beq $t6,15,dragaoP
+	beq $t6,16,caliceP
 	cont:	
 	beq $t5,120,pintarAmarelo
 	beq $t5,66,pintarAzul
@@ -91,53 +100,74 @@ beq $t0,2048,desenharPlayer
 	beq $t5,59,pintarCinzaFase12
 	beq $t5,60,pintarCinzaFase13
 	beq $t5,61,pintarCinzaFase14
-	
 	# Não pintar 
 	jal incrementar
 	j loop
 ##################################### Carregar Mapas ############################
 carregarMapa1:
 	li $t6,1
-	j zerar
+	jal zerar
+	j loop
 carregarMapa2:
 	li $t6,2
-	j zerar
+	jal zerar
+	j loop
 carregarMapa3:
 	li $t6,3
-	j zerar
+	jal zerar
+	j loop
 carregarMapa4:
 	li $t6,4
-	j zerar
+	jal zerar
+	j loop
 carregarMapa5:
 	li $t6,5
-	j zerar
+	jal zerar
+	j loop
 carregarMapa6:
 	li $t6,6
-	j zerar
+	jal zerar
+	j loop
 carregarMapa7:
 	li $t6,7
-	j zerar
+	jal zerar
+	j loop
 carregarMapa8:
 	li $t6,8
-	j zerar
+	jal zerar
+	j loop
 carregarMapa9:
 	li $t6,9
-	j zerar
+	jal zerar
+	j loop
 carregarMapa10:
 	li $t6,10
-	j zerar
+	jal zerar
+	j loop
 carregarMapa11:
 	li $t6,11
-	j zerar
+	jal zerar
+	j loop
 carregarMapa12:
 	li $t6,12
-	j zerar
+	jal zerar
+	j loop
 carregarMapa13:
 	li $t6,13
-	j zerar
+	jal zerar
+	j loop
 carregarMapa14:
 	li $t6,14
-	j zerar
+	jal zerar
+	j loop
+carregarDragão:
+	li $t6,15
+	jal zerar
+	j loop
+carregarCalice:
+	li $t6,16
+	jal zerar
+	j loop
 ############################# PAUSE #############################
 carregarPause:
 	li $v0,31
@@ -146,8 +176,7 @@ carregarPause:
 	addi $a2,$zero,47 # insturmento
 	addi $a3,$zero,127 # volume	
 	syscall	
-	li $t0,0
-	lui $t1,0x1001
+	jal zerar
 	j desenharPause
 desenharPause:
 	beq $t0,2048,esperarDespause
@@ -164,17 +193,19 @@ verificar:
 	beq $t3,112,somDespause
 	j esperarDespause
 somDespause:
+	li $v0,31
 	addi $a0,$zero,73 # passo
 	addi $a1,$zero,250 # duração
 	addi $a2,$zero,47 # insturmento
 	addi $a3,$zero,127 # volume	
 	syscall	
-	j zerar
+	jal zerar
+	j loop
 #################################### Zera iteradores ##############################
 zerar:
 	li $t0,0
 	lui $t1,0x1001
-	j loop
+	jr $ra
 # Incrementa tanto o índice do vetor quanto o pixel no bitmap
 incrementar:
 	addi $t0,$t0,4
@@ -185,16 +216,30 @@ desenharPlayer:
 	li $t5,0xf0ffff
 	addi $t1,$t1,-324
 	sw $t5,0($t1)
+	beq $t6,9,carregarDragão
+	beq $t6,2,carregarCalice
 	aguardaInput:
 		lw $t3,0($t2)
-		beq $t3,1,movimentar	
-	j aguardaInput	
+		beq $t3,1,movimentar
+		beq $t6,16,zerarPcalice
+		j aguardaInput
+zerarPcalice:
+	jal zerar
+	j attCalice
+attCalice:
+	jal incrementar
+	beq $t0,2048,aguardaInput
+	lw $t5,calice($t0)
+	beq $t5,66,corCalice	
+	j attCalice	
+		
 movimentar:
 	lw $t3,4($t2)
 	beq $t3,97,esquerda
 	beq $t3,100,direita
 	beq $t3,119,cima
 	beq $t3,115,baixo
+	beq $t3,27,zerarSair # esc
 	beq $t3,112,carregarPause # Pause
 	j aguardaInput
 esquerda:
@@ -275,6 +320,10 @@ cima:
 	beq $t4,11119010,carregarMapa11
 	j aguardaInput
 ########################################### Pintoras ###########################################
+corCalice:
+	sw $t8,0($t1)
+	addi $t8,$t8,250
+	j attCalice
 pintarAzul:
 	li $t5,255 # Cor zul em decimal
 	sw $t5,0($t1)
@@ -315,6 +364,16 @@ pintarVermelho:
 	sw $t5,0($t1)
 	jal incrementar
 	j desenharPause
+pintarFimV:
+	li $t5,0xFF0000 # Cor vermelha em hexadecimal
+	sw $t5,0($t1)
+	jal incrementar
+	j loopSair
+pintarFimP:
+	li $t5,0 # Cor vermelha em hexadecimal
+	sw $t5,0($t1)
+	jal incrementar
+	j loopSair
 ############################ PINTA OS SOLOS DE CINZA INDICANDO QUAL O PROX. MAPA A SER DESENHADO ####################
 pintarCinzaFase2:
 	li $t5,11119019
@@ -376,7 +435,17 @@ pintarCinzaFase14:
 	sw $t5,0($t1)
 	jal incrementar
 	j loop
-####################################################################################
+################################################# FIM ###################################
+zerarSair:
+	jal zerar
+	j loopSair
+loopSair:
+	beq $t0,2048,fim
+	lw $t5,TelaFim($t0)
+	beq $t5,80,pintarFimP
+	beq $t5,45,pintarFimV
+	jal incrementar
+	j loopSair
 fim:
 	li $v0,10
 	syscall
